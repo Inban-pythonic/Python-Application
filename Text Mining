@@ -1,0 +1,99 @@
+#pip install tweepy
+import tweepy
+
+## import the libraries
+import tweepy, codecs
+
+## fill in your Twitter credentials 
+consumer_key = ‘your consumer key here’
+consumer_secret = ‘your consumer secret key here’
+access_token = ‘your access token here’
+access_token_secret = ‘your access token secret here’
+
+## let Tweepy set up an instance of the REST API
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_token, access_token_secret)
+api = tweepy.API(auth)
+
+## fill in your search query and store your results in a variable
+results = api.search(q = "your search term here", lang = "en", result_type = "recent", count = 1000)
+
+## use the codecs library to write the text of the Tweets to a .txt file
+file = codecs.open("your text file name here.txt", "w", "utf-8")
+for result in results:
+	file.write(result.text)
+	file.write("\n")
+file.close()
+
+#pip install aylien-apiclient
+
+from aylienapiclient import textapi
+rom aylienapiclient import textapi
+client = textapi.Client("Your_app_ID", "Your_application_key")
+sentiment = client.Sentiment({'text': 'enter some of your own text here'})
+print(sentiment)
+
+from aylienapiclient import textapi
+import csv, io
+
+## Initialize a new client of AYLIEN Text API
+client = textapi.Client("your_app_ID", "your_app_key")
+
+with io.open('Trump_Tweets.csv', 'w', encoding='utf8', newline='') as csvfile:
+	csv_writer = csv.writer(csvfile)
+	csv_writer.writerow(["Tweet", "Sentiment"])
+	with io.open("Trump.txt", 'r', encoding='utf8') as f:
+	    for tweet in f.readlines():
+	    	## Remove extra spaces or newlines around the text
+	    	tweet = tweet.strip()
+
+	    	## Reject tweets which are empty so you don’t waste your API credits
+	    	if len(tweet) == 0:
+	    		print('skipped')
+	    		continue
+	    	
+	    	print(tweet)
+
+	    	## Make call to AYLIEN Text API
+	    	sentiment = client.Sentiment({'text': tweet})
+
+	    	## Write the sentiment result into csv file
+	    	csv_writer.writerow([sentiment['text'], sentiment['polarity']])
+            
+#pip install matplotlib
+#pip install pandas
+
+
+## import the libraries
+import matplotlib.pyplot as plt 
+import pandas as pd
+from collections import Counter
+import csv 
+
+## open up your csv file with the sentiment results
+with open('your_csv_file_from_step_2.csv', 'r', encoding = 'utf8') as csvfile:
+	## use Pandas to read the “Sentiment” column,
+        df = pd.read_csv(csvfile)
+	sent = df["Sentiment"]
+
+## use Counter to count how many times each sentiment appears
+## and save each as a variable
+	counter = Counter(sent)
+	positive = counter['positive']
+	negative = counter['negative']
+	neutral = counter['neutral']
+
+## declare the variables for the pie chart, using the Counter variables for “sizes”
+labels = 'Positive', 'Negative', 'Neutral'
+sizes = [positive, negative, neutral]
+colors = ['green', 'red', 'grey']
+yourtext = "Your Search Query from Step 2"
+
+## use matplotlib to plot the chart
+plt.pie(sizes, labels = labels, colors = colors, shadow = True, startangle = 90)
+plt.title("Sentiment of 200 Tweets about "+yourtext)
+plt.show()
+
+
+
+
